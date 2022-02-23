@@ -16,55 +16,63 @@ class Downloader {
 
   Downloader() {
     _dio = Dio();
-    Fimber.plantTree(DebugTree());
   }
 
-  Future<File?> download(String url) async {
+  Future<DownloadResult> download(String url,
+      {Function(int, int)? progressCallback}) async {
     try {
       var storageDir = await getExternalStorageDirectory();
-      // String storagePath = storageDir!.path;
-      // File file = File('$storagePath/houji.apk');
-
-      // if (!file.existsSync()) {
-      //   file.createSync();
-      // }
 
       if (await Permission.storage.request().isGranted) {
         //权限通过
-        Fimber.i("permission granted");
+        Fimber.i("storage permission granted");
       } else {
-        Fimber.e("permission not granted");
+        Fimber.e("storage permission not granted");
       }
 
       Fimber.i("url: $url");
-      // String savePath = "${storageDir?.path}/houji.apk";
-      String savePath = "${storageDir?.path}/bgm.mp3";
+      String savePath = "${storageDir?.path}/yoyo.apk";
       Fimber.i("savePath: $savePath");
+
+      int downloadedBytes = 0, totalBytes = 0;
       var response = await _dio?.download(url, savePath,
-          // options:
-          //     Options(responseType: ResponseType.bytes, followRedirects: false),
           onReceiveProgress: (count, total) {
+        downloadedBytes = count;
+        totalBytes = total;
+        _refreshProgress(progressCallback, count, total);
         Fimber.w("<><Downloader.download>progress: $count, $total");
       });
-
-      File file = File(savePath);
-      if (await file.exists()) {
-        file.delete();
-        Fimber.i("<><Downloader.download>file deleted");
-      }
-
       Fimber.i(
-          "<><Downloader.download>code: ${response?.statusCode}, message: ${response?.statusMessage}, data: ${response?.data}");
+          "<><Downloader.download>code: ${response?.statusCode}, message: ${response?.statusMessage}, data: ${response?.data}, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes");
 
-      // file.writeAsBytesSync(response!.data);
-      // return file;
-      return null;
+      if (downloadedBytes == totalBytes) {
+        return DownloadResult(success: true, file: File(savePath));
+      } else {
+        return DownloadResult(success: false, message: "未下载完成");
+      }
     } on DioError catch (e) {
       Fimber.e("<><Downloader.download>dio error: $e");
-      return null;
+      return DownloadResult(success: false, message: e.toString());
     } catch (e) {
       Fimber.e("<><Downloader.download>unknown error: $e");
-      return null;
+      return DownloadResult(success: false, message: e.toString());
     }
   }
+
+  void _refreshProgress(
+      Function(int, int)? progressCallback, int count, int total) {
+    try {
+      progressCallback?.call(count, total);
+    } catch (e) {
+      Fimber.e("<><Downloader.download>progress callback error: $e");
+    }
+  }
+}
+
+class DownloadResult {
+  bool success;
+  String? message;
+  File? file;
+
+  DownloadResult({required this.success, this.message, this.file});
 }
