@@ -13,12 +13,13 @@ class Downloader {
   }
 
   Dio? _dio;
+  final String _serverPath = "https://rex-qn.gululu-a.com/houji";
 
   Downloader() {
     _dio = Dio();
   }
 
-  Future<DownloadResult> download(String url,
+  Future<DownloadResult> download(String fileName,
       {Function(int, int)? progressCallback}) async {
     try {
       var storageDir = await getExternalStorageDirectory();
@@ -30,8 +31,10 @@ class Downloader {
         Fimber.e("storage permission not granted");
       }
 
+      String url = "$_serverPath/$fileName";
       Fimber.i("url: $url");
-      String savePath = "${storageDir?.path}/yoyo.apk";
+
+      String savePath = "${storageDir?.path}/$fileName";
       Fimber.i("savePath: $savePath");
 
       int downloadedBytes = 0, totalBytes = 0;
@@ -45,7 +48,7 @@ class Downloader {
       Fimber.i(
           "<><Downloader.download>code: ${response?.statusCode}, message: ${response?.statusMessage}, data: ${response?.data}, downloadedBytes: $downloadedBytes, totalBytes: $totalBytes");
 
-      if (downloadedBytes == totalBytes) {
+      if (downloadedBytes == totalBytes || totalBytes == -1) {
         return DownloadResult(success: true, file: File(savePath));
       } else {
         return DownloadResult(success: false, message: "未下载完成");
