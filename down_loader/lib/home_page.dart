@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '服务器版本',
+                          '本地版本',
                           style: Theme.of(context)
                               .textTheme
                               .subtitle1
