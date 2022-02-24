@@ -51,9 +51,9 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 10),
                   Text("version: ${_packageInfo!.version}",
                       style: Theme.of(context).textTheme.bodyText1),
-                  const SizedBox(height: 10),
-                  Text("build: 2022-02-23 18:00:00",
-                      style: Theme.of(context).textTheme.bodyText1),
+                  // const SizedBox(height: 10),
+                  // Text("build: 2022-02-23 18:00:00",
+                  //     style: Theme.of(context).textTheme.bodyText1),
                   Expanded(
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
