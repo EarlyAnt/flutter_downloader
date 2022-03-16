@@ -1,12 +1,23 @@
+import 'package:fimber_io/fimber_io.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_fimber/flutter_fimber.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'splash_screen_page.dart';
 
-void main() {
-  Fimber.plantTree(DebugTree());
+void main() async {
   runApp(const MyApp());
+
+  var storageDir = await getExternalStorageDirectory();
+  var logFileName = "${storageDir?.path}/my-Log-File.txt";
+
+  Fimber.plantTree(FimberFileTree(logFileName,
+      logFormat:
+          "${CustomFormatTree.timeStampToken}: ${CustomFormatTree.messageToken}"));
+
+  Fimber.plantTree(DebugTree());
+
   Fimber.i("----App Run----");
+  Fimber.i("log file path: $logFileName");
 }
 
 class MyApp extends StatelessWidget {

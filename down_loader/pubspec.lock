@@ -85,18 +85,18 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.6.5"
+  fimber_io:
+    dependency: "direct main"
+    description:
+      name: fimber_io
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.6.5"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_fimber:
-    dependency: "direct main"
-    description:
-      name: flutter_fimber
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.6.5"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -303,6 +303,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.1.0"
+  vs_scrollbar:
+    dependency: "direct main"
+    description:
+      name: vs_scrollbar
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.2.1"
   win32:
     dependency: transitive
     description:

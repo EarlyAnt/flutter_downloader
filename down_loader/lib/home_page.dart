@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:down_loader/log_file_page.dart';
+import 'package:fimber_io/fimber_io.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_fimber/flutter_fimber.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:install_plugin/install_plugin.dart';
 import 'package:package_info/package_info.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'data.dart';
 import 'downloader.dart';
@@ -126,10 +128,32 @@ class _HomePageState extends State<HomePage> {
               heroTag: "forth",
               child: const Icon(Icons.delete),
             ),
+            const SizedBox(width: 5),
+            FloatingActionButton(
+              onPressed: _openLogFile,
+              backgroundColor:
+                  value == PageStates.ready ? Colors.blue : Colors.grey,
+              tooltip: 'Log',
+              heroTag: "fifth",
+              child: const Icon(Icons.bookmark),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void _openLogFile() async {
+    _pageStateNotifier.value = PageStates.showLog;
+    var storageDir = await getExternalStorageDirectory();
+    var logFileName = "${storageDir?.path}/my-Log-File.txt";
+    File file = File(logFileName);
+    if (await file.exists()) {
+      var contents = await file.readAsString();
+      await Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => LogFilePage(fileContent: contents)));
+      _pageStateNotifier.value = PageStates.ready;
+    }
   }
 
   void _compareVersion() async {
@@ -205,10 +229,12 @@ class _HomePageState extends State<HomePage> {
       await _file!.delete();
       _pageStateNotifier.value = PageStates.ready;
       _messageNotifier.value = "已删除文件";
+      Fimber.w("文件已删除");
     } else {
       _messageNotifier.value = "文件不存在";
+      Fimber.w("文件不存在");
     }
   }
 }
 
-enum PageStates { ready, comparing, downloading, installing, deleting }
+enum PageStates { ready, comparing, downloading, installing, deleting, showLog }
