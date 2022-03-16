@@ -1,19 +1,16 @@
 import 'package:fimber_io/fimber_io.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
+import 'log_file_util.dart';
 import 'splash_screen_page.dart';
 
 void main() async {
   runApp(const MyApp());
 
-  var storageDir = await getExternalStorageDirectory();
-  var logFileName = "${storageDir?.path}/my-Log-File.txt";
-
+  var logFileName = await getLogFileName();
   Fimber.plantTree(FimberFileTree(logFileName,
       logFormat:
           "${CustomFormatTree.timeStampToken}: ${CustomFormatTree.messageToken}"));
-
   Fimber.plantTree(DebugTree());
 
   Fimber.i("----App Run----");

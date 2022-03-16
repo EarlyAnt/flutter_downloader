@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:install_plugin/install_plugin.dart';
 import 'package:package_info/package_info.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'data.dart';
 import 'downloader.dart';
+import 'log_file_util.dart';
 import 'package_info_util.dart';
 
 class HomePage extends StatefulWidget {
@@ -145,8 +145,7 @@ class _HomePageState extends State<HomePage> {
 
   void _openLogFile() async {
     _pageStateNotifier.value = PageStates.showLog;
-    var storageDir = await getExternalStorageDirectory();
-    var logFileName = "${storageDir?.path}/my-Log-File.txt";
+    var logFileName = await getLogFileName();
     File file = File(logFileName);
     if (await file.exists()) {
       var contents = await file.readAsString();
