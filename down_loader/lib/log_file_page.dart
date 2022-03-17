@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vs_scrollbar/vs_scrollbar.dart';
+
+import 'log_file_util.dart';
 
 class LogFilePage extends StatelessWidget {
   LogFilePage({Key? key, required this.fileContent}) : super(key: key);
@@ -17,10 +21,17 @@ class LogFilePage extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.copy),
+            icon: const Icon(Icons.copy_outlined, size: 20),
             onPressed: () async {
               await Clipboard.setData(ClipboardData(text: fileContent));
               _showMessage("内容已复制");
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, size: 27),
+            onPressed: () async {
+              bool result = await _deleteLogFile();
+              _showMessage(result ? "文件已删除" : "文件不存在");
             },
           )
         ],
@@ -62,6 +73,17 @@ class LogFilePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<bool> _deleteLogFile() async {
+    var fileName = await getLogFileName();
+    File file = File(fileName);
+    if (await file.exists()) {
+      file.delete();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Future<void> _showMessage(String message) async {

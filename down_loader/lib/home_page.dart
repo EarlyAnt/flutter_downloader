@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:down_loader/log_file_page.dart';
 import 'package:fimber_io/fimber_io.dart';
 import 'package:flutter/material.dart';
+
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:install_plugin/install_plugin.dart';
 import 'package:package_info/package_info.dart';
@@ -143,18 +144,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _openLogFile() async {
-    _pageStateNotifier.value = PageStates.showLog;
-    var logFileName = await getLogFileName();
-    File file = File(logFileName);
-    if (await file.exists()) {
-      var contents = await file.readAsString();
-      await Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => LogFilePage(fileContent: contents)));
-      _pageStateNotifier.value = PageStates.ready;
-    }
-  }
-
   void _compareVersion() async {
     _pageStateNotifier.value = PageStates.comparing;
     _messageNotifier.value = "";
@@ -232,6 +221,18 @@ class _HomePageState extends State<HomePage> {
     } else {
       _messageNotifier.value = "文件不存在";
       Fimber.w("文件不存在");
+    }
+  }
+
+  void _openLogFile() async {
+    var logFileName = await getLogFileName();
+    File file = File(logFileName);
+    if (await file.exists()) {
+      _pageStateNotifier.value = PageStates.showLog;
+      var contents = await file.readAsString();
+      await Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => LogFilePage(fileContent: contents)));
+      _pageStateNotifier.value = PageStates.ready;
     }
   }
 }
